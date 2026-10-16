@@ -1,0 +1,118 @@
+name: Test CI/CD Workflow
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  test-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Recuperer le code source
+        uses: actions/checkout@v4
+
+      - name: installer nodejs
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: build frontend
+        run: |
+          cd stock/stock/frontend
+          npm ci
+          npm run build
+
+#  test-backend:
+#      runs-on: ubuntu-latest
+#      steps:
+#        - name: Checkout code
+#          uses: actions/checkout@v4
+#
+#        - name: Set up JDK 21
+#          uses: actions/setup-java@v6
+#          with:
+#            java-version: '21'
+#            distribution: 'temurin'
+#            cache: maven
+#
+#        - name: Run backend tests
+#          run: |
+#            cd backend
+#            ./mvnw -B clean verify -Dtest='!MigrationServiceTest'
+#
+#
+
+#  buildpushfrontend:
+##    needs: test-frontend
+#    runs-on: ubuntu-latest
+#    permissions:
+#      contents: read
+#      actions: read
+#      packages: write
+#
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v4
+#
+#      - name: Extract Docker image metadata
+#        id: meta
+#        uses: docker/metadata-action@v6
+#        with:
+#          images: ${{ secrets.DOCKER_USERNAME }}/my-image
+#
+#      - name: Log in to Docker
+#        uses: docker/login-action@v4
+#        with:
+#          username: ${{ secrets.DOCKER_USERNAME }}
+#          password: ${{ secrets.DOCKER_PASSWORD }}
+#
+#      - name: Set up Docker Buildx
+#        uses: docker/setup-buildx-action@v4
+#
+#      - name: buildfrontend
+#        uses: docker/build-push-action@v6
+#        with:
+#          context: ./frontend
+#          file: ./Dockerfile
+#          push: true
+#          tags: ${{ secrets.DOCKER_USERNAME }}/stock_frontend_prod:latest
+#
+#  buildpushbackend:
+##    needs: test-backend
+#    runs-on: ubuntu-latest
+#    permissions:
+#      contents: read
+#      actions: read
+#      packages: write
+#
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v4
+#
+#      - name: Extract Docker image metadata
+#        id: meta
+#        uses: docker/metadata-action@v6
+#        with:
+#          images: ${{ secrets.DOCKER_USERNAME }}/my-image
+#
+#      - name: Log in to Docker Hub
+#        uses: docker/login-action@v4
+#        with:
+#          username: ${{ secrets.DOCKER_USERNAME }}
+#          password: ${{ secrets.DOCKER_PASSWORD }}
+#
+#      - name: Set up Docker Buildx
+#        uses: docker/setup-buildx-action@v4
+#
+#      - name: build backend
+#        uses: docker/build-push-action@v6
+#        with:
+#          context: ./backend
+#          file: ./Dockerfile
+#          push: true
+#          tags: ${{ secrets.DOCKER_USERNAME }}/stock_backend_prod:latest
+#
